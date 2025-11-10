@@ -1,0 +1,89 @@
+*jump_cursor.jax*                                                *jump_cursor*
+
+Type |gO| to see the table of contents.
+
+==============================================================================
+導入                                                       *jump_cursor-intro*
+
+楽にカーソル移動をするためのneovimプラグイン
+操作方法は `jumpcursor.vim` と同じ
+
+==============================================================================
+依存
+
+    luaの `regex` モジュールが必要
+    リポジトリ: https://github.com/stg73/lua-modules
+
+==============================================================================
+使い方                                                     *jump_cursor-usage*
+
+`jumpcursor.vim` と同じ
+関数を実行すると行別にハイライトされるので 移動したい行のマークを入力する
+するとその行が列別にハイライトされるので 移動したい列のマークを入力する
+
+例: "|" はカーソル
+
+最初
+>
+    h|oge
+    fugafugafuga
+    piyo piyo
+<
+関数を実行
+>
+    a|aaa
+    bbbbbbbbbbbb
+    cccc cccc
+<
+"c"を入力
+>
+    h|oge
+    fugafugafuga
+    abcd efgh
+
+"f"を入力
+>
+    hoge
+    fugafugafuga
+    piyo p|iyo
+<
+
+==============================================================================
+jumpcursor.vim との違い                               *jump_cursor-difference*
+
+マルチバイトに対応している
+ハイライト方法:
+    ジャンプできない列はどの段階でもハイライトしない
+カスタマイズできる:
+    ハイライトグループ
+    無視する文字
+    マーク (これは `jumpcursor.vim` でもできる)
+
+カスタマイズに変数を使わず引数を使う
+
+==============================================================================
+関数                                                    *jump_cursor-function*
+
+jump_cursor.jump({opts})()                                *jump_cursor.jump()*
+    ジャンプする
+    カリー化されている
+>lua
+    -- 既定の設定
+    vim.keymap.set("n","<leader>j",require("jump_cursor").jump())
+    -- 挙動をカスタマイズ
+    vim.keymap.set("n","<leader>j",require("jump_cursor").jump({
+        hl_group = "error", -- エラーの色でハイライトする
+        ignore = "", -- 全ての文字にジャンプする
+        marks = "1234567890", -- ジャンプに使う文字
+    }))
+<
+    引数: ~
+        {opts}  (`table`) オプション 以下を含む
+                • {hl_group}? (`string`, 既定: `"special"`)
+                  ハイライトグループ
+                • {marks}? (`string`, 既定: `"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@[;:],./_-^\\1234567890"`)
+                • {ignore}? (`string`, 既定: `"/s"`) ジャンプしない文字
+                  モジュール `regex` の形式の正規表現
+
+------------------------------------------------------------------------------
+ vi:tw=78:ts=4:ft=help:norl:et
