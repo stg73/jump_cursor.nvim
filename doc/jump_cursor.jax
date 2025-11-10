@@ -11,8 +11,8 @@ Type |gO| to see the table of contents.
 ==============================================================================
 依存
 
-    luaの `regex` モジュールが必要
-    リポジトリ: https://github.com/stg73/lua-modules
+luaの `regex` モジュールが必要
+リポジトリ: https://github.com/stg73/lua-modules
 
 ==============================================================================
 使い方                                                     *jump_cursor-usage*
@@ -52,7 +52,6 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 <
 
 カスタマイズなどについては |jump_cursor.jump()| を参照
-
 
 ==============================================================================
 jumpcursor.vim との違い                               *jump_cursor-difference*
