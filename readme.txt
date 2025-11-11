@@ -1,5 +1,9 @@
 直感的にカーソルを移動するためのneovimプラグイン
-使い方は https://github.com/skanehira/jumpcursor.vim と同じ
+操作方法は https://github.com/skanehira/jumpcursor.vim と同じ
+
+使い方:
+    このディレクトリをruntimepathに追加し require("jump_cursor") する
+    詳細はhelpを参照
 
 luaの regex モジュールが必要
 場所: https://github.com/stg73/lua-modules
