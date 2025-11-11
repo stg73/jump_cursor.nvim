@@ -4,7 +4,7 @@ local r = require("regex")
 
 function M.jump(opts) return function()
     local opts = opts or {}
-    local marks = opts.marks or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@[;:]./_-^\\1234567890"
+    local marks = opts.marks or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|"
     local hl_group = opts.hl_group or "special"
     local ignore = opts.ignore or "/s"
 
