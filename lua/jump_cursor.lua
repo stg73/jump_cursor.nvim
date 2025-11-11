@@ -2,6 +2,7 @@ local M = {}
 
 local r = require("regex")
 
+-- table -> ( -> )
 function M.jump(opts)
     -- オプション
     local opts = opts or {}
@@ -12,7 +13,10 @@ function M.jump(opts)
     local mark_table = vim.split(marks,"")
     local name_space = vim.api.nvim_create_namespace("jump_cursor")
 
-    -- 空行などを飛ばすため
+    -- 必要な関数
+
+    -- ジャンプできる行を取得
+    -- string[] -> integer[]
     local function get_jumpable_line(lines)
         local t = {}
 
@@ -31,6 +35,8 @@ function M.jump(opts)
         return t
     end
 
+    -- ジャンプできる列を取得
+    -- string -> integer[]
     -- nvim_buf_set_extmark()はバイト指定なのでそれに合わせてバイト数で取得する
     local function get_jumpable_column(text)
         local t = {}
@@ -40,7 +46,7 @@ function M.jump(opts)
             local char = r.match(".")(str)
             local rest = r.match(".@<=(.+)")(str)
             local char_column = byte + 1
-            local char_byte = string.len(char)
+            local char_byte = string.len(char) -- マルチバイトに対応するためバイト数を取得する
 
             if not r.is(ignore)(char) then -- 無視する文字でなければ
                 table.insert(t,char_column)
@@ -56,6 +62,8 @@ function M.jump(opts)
         return t
     end
 
+    -- 特定の行を列別に塗り潰し 文字が入力されたらそれに対応する列を返す
+    -- integer -> integer
     local function get_column(line)
         local jumpable = get_jumpable_column(vim.fn.getline(line))
         local function loop(i)
@@ -82,6 +90,8 @@ function M.jump(opts)
         return column
     end
 
+    -- 特定の範囲を行別に塗り潰し 文字が入力されたらそれに対応する行を返す
+    -- integer, integer -> integer
     local function get_line(s,e)
         local lines = vim.api.nvim_buf_get_lines(0,s - 1,e,false)
         local jumpable_line = get_jumpable_line(lines)
@@ -121,6 +131,7 @@ function M.jump(opts)
     end
 
     -- 本体
+    --  -> 
     return function()
         local line = get_line(vim.fn.line("w0"),vim.fn.line("w$"))
         if line then
