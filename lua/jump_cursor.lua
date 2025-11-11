@@ -2,7 +2,8 @@ local M = {}
 
 local r = require("regex")
 
-function M.jump(opts) return function()
+function M.jump(opts)
+    -- オプション
     local opts = opts or {}
     local marks = opts.marks or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|"
     local hl_group = opts.hl_group or "special"
@@ -119,13 +120,16 @@ function M.jump(opts) return function()
         end
     end
 
-    local line = get_line(vim.fn.line("w0"),vim.fn.line("w$"))
-    if line then
-        local column = get_column(line)
-        if column then
-            vim.fn.cursor(line,column)
+    -- 本体
+    return function()
+        local line = get_line(vim.fn.line("w0"),vim.fn.line("w$"))
+        if line then
+            local column = get_column(line)
+            if column then
+                vim.fn.cursor(line,column)
+            end
         end
     end
-end end
+end
 
 return M
