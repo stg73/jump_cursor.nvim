@@ -130,17 +130,30 @@ function M.jump(opts)
         end
     end
 
-    -- 本体
-    --  -> 
-    return function()
-        local line = get_line(vim.fn.line("w0"),vim.fn.line("w$"))
+    -- integer, integer -> integer[]
+    local function get_position(s,e)
+        local line = get_line(s,e)
         if line then
             local column = get_column(line)
             if column then
-                vim.fn.cursor(line,column)
+                return { line, column }
+            else
+                return nil
             end
+        else
+            return nil
         end
     end
+
+    -- 本体
+    local function jump()
+        local pos = get_position(vim.fn.line("w0"),vim.fn.line("w$"))
+        if pos then
+            vim.fn.cursor(pos[1],pos[2])
+        end
+    end
+
+    return jump
 end
 
 return M
