@@ -88,7 +88,7 @@ jump_cursor.jump({opts})()                                *jump_cursor.jump()*
     }))
 <
     引数: ~
-        {opts}  (`table`) オプション 以下を含む
+        {opts}  (`table?`) オプション 以下を含む
                 • {hl_group}? (`string`, 既定: `"special"`)
                   ハイライトグループ
                 • {marks}? (`string`, 既定: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|")
