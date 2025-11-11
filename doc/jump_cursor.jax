@@ -57,14 +57,19 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 jumpcursor.vim との違い                               *jump_cursor-difference*
 
 マルチバイトに対応している
+
 ハイライト方法:
     ジャンプできない列は行ごとの塗り潰しの段階でも塗り潰さない
+    ジャンプできない行はラベルを飛ばす
+
 カスタマイズできる:
     ハイライトグループ
     無視する文字
-    マーク (これは `jumpcursor.vim` でもできる)
+    ラベル (これは `jumpcursor.vim` でもできる)
 
-カスタマイズに変数を使わず引数を使う
+カスタマイズにグローバル変数を使わず引数を使う
+
+luaで書かれている
 
 ==============================================================================
 関数                                                    *jump_cursor-function*
