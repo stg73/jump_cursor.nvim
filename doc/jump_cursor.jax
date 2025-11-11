@@ -91,7 +91,7 @@ jump_cursor.jump({opts})()                                *jump_cursor.jump()*
         {opts}  (`table`) オプション 以下を含む
                 • {hl_group}? (`string`, 既定: `"special"`)
                   ハイライトグループ
-                • {marks}? (`string`, 既定: `"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|"`)
+                • {marks}? (`string`, 既定: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|")
                 • {ignore}? (`string`, 既定: `"/s"`) ジャンプしない文字
                   モジュール `regex` の形式の正規表現
 
