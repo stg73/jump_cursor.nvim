@@ -2,8 +2,8 @@ local M = {}
 
 local r = require("regex")
 
--- table -> ( -> )
-function M.jump(opts)
+-- table -> table
+function M.opt(opts)
     -- オプション
     local opts = opts or {}
     local marks = opts.marks or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|"
@@ -13,11 +13,11 @@ function M.jump(opts)
     local mark_table = vim.split(marks,"")
     local name_space = vim.api.nvim_create_namespace("jump_cursor")
 
-    -- 必要な関数
+    local N = {}
 
     -- ジャンプできる行を取得
     -- string[] -> integer[]
-    local function get_jumpable_line(lines)
+    function N.get_jumpable_line(lines)
         local t = {}
 
         local function loop(i)
@@ -38,7 +38,7 @@ function M.jump(opts)
     -- ジャンプできる列を取得
     -- string -> integer[]
     -- nvim_buf_set_extmark()はバイト指定なのでそれに合わせてバイト数で取得する
-    local function get_jumpable_column(text)
+    function N.get_jumpable_column(text)
         local t = {}
 
         local function loop(byte,str)
@@ -64,8 +64,8 @@ function M.jump(opts)
 
     -- 特定の行を列別に塗り潰し 文字が入力されたらそれに対応する列を返す
     -- integer -> integer
-    local function get_column(line)
-        local jumpable = get_jumpable_column(vim.fn.getline(line))
+    function N.get_column(line)
+        local jumpable = N.get_jumpable_column(vim.fn.getline(line))
         local function loop(i)
             vim.api.nvim_buf_set_extmark(0,name_space,line - 1,jumpable[i] - 1,{
                 virt_text_pos = "overlay",
@@ -92,11 +92,11 @@ function M.jump(opts)
 
     -- 特定の範囲を行別に塗り潰し 文字が入力されたらそれに対応する行を返す
     -- integer, integer -> integer
-    local function get_line(s,e)
+    function N.get_line(s,e)
         local lines = vim.api.nvim_buf_get_lines(0,s - 1,e,false)
-        local jumpable_line = get_jumpable_line(lines)
+        local jumpable_line = N.get_jumpable_line(lines)
         local function loop_line(l)
-            local jumpable = get_jumpable_column(lines[jumpable_line[l]])
+            local jumpable = N.get_jumpable_column(lines[jumpable_line[l]])
             local function loop_column(c)
                 vim.api.nvim_buf_set_extmark(0,name_space,jumpable_line[l] + s - 2,jumpable[c] - 1,{
                     virt_text_pos = "overlay",
@@ -131,10 +131,10 @@ function M.jump(opts)
     end
 
     -- integer, integer -> integer[]
-    local function get_position(s,e)
-        local line = get_line(s,e)
+    function N.get_position(s,e)
+        local line = N.get_line(s,e)
         if line then
-            local column = get_column(line)
+            local column = N.get_column(line)
             if column then
                 return { line, column }
             else
@@ -146,14 +146,14 @@ function M.jump(opts)
     end
 
     -- 本体
-    local function jump()
-        local pos = get_position(vim.fn.line("w0"),vim.fn.line("w$"))
+    function N.jump()
+        local pos = N.get_position(vim.fn.line("w0"),vim.fn.line("w$"))
         if pos then
             vim.fn.cursor(pos[1],pos[2])
         end
     end
 
-    return jump
+    return N
 end
 
 return M

@@ -20,7 +20,7 @@ luaの `regex` モジュールが必要
 基本的には `jumpcursor.vim` と同じなので 以下を見たら分かる
 https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 
-|jump_cursor.jump()| を実行する -> 行ごとにラベルで塗り潰される
+|jump_cursor.opt().jump()| を実行する -> 行ごとにラベルで塗り潰される
 移動したい行のラベルを入力する -> その行が列ごとにラベルで塗り潰される
 移動したい列のラベルを入力する -> その位置にカーソルが移動する
 
@@ -74,20 +74,20 @@ luaで書かれている
 ==============================================================================
 関数                                                    *jump_cursor-function*
 
-jump_cursor.jump({opts})()                                *jump_cursor.jump()*
-    ジャンプする
-    カリー化されている
+jump_cursor.opt({opts})                                    *jump_cursor.opt()*
+    関数のテーブルを返す
+    {opts} で挙動を変更できる
 >lua
     -- ジャンプする
-    require("jump_cursor").jump()()
+    require("jump_cursor").opt().jump()
     -- 挙動をカスタマイズ
-    require("jump_cursor").jump({
+    require("jump_cursor").opt({
         hl_group = "error", -- エラーの色でハイライトする
         ignore = "", -- 全ての文字にジャンプする
         marks = "1234567890", -- ジャンプに使う文字
-    })()
+    }).jump()
     -- キーマップして使う
-    vim.keymap.set("n","<leader>j",require("jump_cursor").jump())
+    vim.keymap.set("n","<leader>j",require("jump_cursor").opt().jump)
 <
 
     引数: ~
@@ -97,6 +97,57 @@ jump_cursor.jump({opts})()                                *jump_cursor.jump()*
                 • {marks}? (`string`, 既定: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|")
                 • {ignore}? (`string`, 既定: `"/s"`) ジャンプしない文字
                   モジュール `regex` の形式の正規表現
+
+    返値: ~
+        (`table`) 以下を含むテーブル 重要なものは `jump()` だけ
+
+jump()                                              *jump_cursor.opt().jump()*
+    ジャンプする
+
+get_jumpable_column({text})          *jump_cursor.opt().get_jumpable_column()*
+
+    引数: ~
+      • {text}  (`string`) 行
+
+    返値: ~
+        (`integer[]`) ジャンプできる列のインデックスのリスト
+
+get_jumpable_line({lines})             *jump_cursor.opt().get_jumpable_line()*
+
+    引数: ~
+      • {lines}  (`string[]`) 行のリスト
+
+    返値: ~
+        (`integer[]`) ジャンプできる行のインデックスのリスト
+
+get_column({line})                            *jump_cursor.opt().get_column()*
+    行をハイライトして列を選択させる
+
+    引数: ~
+      • {line}  (`integer`) 行
+
+    返値: ~
+        (`integer`) 選択された列
+
+get_line({start},{end})                         *jump_cursor.opt().get_line()*
+    範囲をハイライトして行を選択させる
+
+    引数: ~
+      • {start}  (`integer`) 開始行
+      • {end}    (`integer`) 終了行
+
+    返値: ~
+        (`integer`) 選択された行
+
+get_position({start},{end})                 *jump_cursor.opt().get_position()*
+    範囲をハイライトして位置を選択させる
+
+    引数: ~
+      • {start}  (`integer`) 開始行
+      • {end}    (`integer`) 終了行
+
+    返値: ~
+        (`integer[]`) 選択された位置  行と列の組み合わせ
 
 ------------------------------------------------------------------------------
  vi:tw=78:ts=4:ft=help:norl:et
