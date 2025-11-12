@@ -78,15 +78,18 @@ jump_cursor.jump({opts})()                                *jump_cursor.jump()*
     ジャンプする
     カリー化されている
 >lua
-    -- 既定の設定
-    vim.keymap.set("n","<leader>j",require("jump_cursor").jump())
+    -- ジャンプする
+    require("jump_cursor").jump()()
     -- 挙動をカスタマイズ
-    vim.keymap.set("n","<leader>j",require("jump_cursor").jump({
+    require("jump_cursor").jump({
         hl_group = "error", -- エラーの色でハイライトする
         ignore = "", -- 全ての文字にジャンプする
         marks = "1234567890", -- ジャンプに使う文字
-    }))
+    })()
+    -- キーマップして使う
+    vim.keymap.set("n","<leader>j",require("jump_cursor").jump())
 <
+
     引数: ~
         {opts}  (`table?`) オプション 以下を含む
                 • {hl_group}? (`string`, 既定: `"special"`)
