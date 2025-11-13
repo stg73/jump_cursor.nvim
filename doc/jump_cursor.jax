@@ -120,7 +120,7 @@ get_jumpable_line({lines})             *jump_cursor.opt().get_jumpable_line()*
     返値: ~
         (`integer[]`) ジャンプできる行のインデックスのリスト
 
-get_column({line})                            *jump_cursor.opt().get_column()*
+select_column({line})                      *jump_cursor.opt().select_column()*
     行をハイライトして列を選択させる
 
     引数: ~
@@ -129,7 +129,7 @@ get_column({line})                            *jump_cursor.opt().get_column()*
     返値: ~
         (`integer`) 選択された列
 
-get_line({start},{end})                         *jump_cursor.opt().get_line()*
+select_line({start},{end})                   *jump_cursor.opt().select_line()*
     範囲をハイライトして行を選択させる
 
     引数: ~
@@ -139,7 +139,7 @@ get_line({start},{end})                         *jump_cursor.opt().get_line()*
     返値: ~
         (`integer`) 選択された行
 
-get_position({start},{end})                 *jump_cursor.opt().get_position()*
+select_position({start},{end})           *jump_cursor.opt().select_position()*
     範囲をハイライトして位置を選択させる
 
     引数: ~

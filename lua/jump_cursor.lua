@@ -64,7 +64,7 @@ function M.opt(opts)
 
     -- 特定の行を列別に塗り潰し 文字が入力されたらそれに対応する列を返す
     -- integer -> integer
-    function N.get_column(line)
+    function N.select_column(line)
         local jumpable = N.get_jumpable_column(vim.fn.getline(line))
         local function loop(i)
             vim.api.nvim_buf_set_extmark(0,name_space,line - 1,jumpable[i] - 1,{
@@ -92,7 +92,7 @@ function M.opt(opts)
 
     -- 特定の範囲を行別に塗り潰し 文字が入力されたらそれに対応する行を返す
     -- integer, integer -> integer
-    function N.get_line(s,e)
+    function N.select_line(s,e)
         local lines = vim.api.nvim_buf_get_lines(0,s - 1,e,false)
         local jumpable_line = N.get_jumpable_line(lines)
         local function loop_line(l)
@@ -131,10 +131,10 @@ function M.opt(opts)
     end
 
     -- integer, integer -> integer[]
-    function N.get_position(s,e)
-        local line = N.get_line(s,e)
+    function N.select_position(s,e)
+        local line = N.select_line(s,e)
         if line then
-            local column = N.get_column(line)
+            local column = N.select_column(line)
             if column then
                 return { line, column }
             else
@@ -147,7 +147,7 @@ function M.opt(opts)
 
     -- 本体
     function N.jump()
-        local pos = N.get_position(vim.fn.line("w0"),vim.fn.line("w$"))
+        local pos = N.select_position(vim.fn.line("w0"),vim.fn.line("w$"))
         if pos then
             vim.fn.cursor(pos[1],pos[2])
         end

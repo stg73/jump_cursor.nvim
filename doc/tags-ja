@@ -5,9 +5,9 @@ jump_cursor-intro	jump_cursor.jax	/*jump_cursor-intro*
 jump_cursor-usage	jump_cursor.jax	/*jump_cursor-usage*
 jump_cursor.jax	jump_cursor.jax	/*jump_cursor.jax*
 jump_cursor.opt()	jump_cursor.jax	/*jump_cursor.opt()*
-jump_cursor.opt().get_column()	jump_cursor.jax	/*jump_cursor.opt().get_column()*
 jump_cursor.opt().get_jumpable_column()	jump_cursor.jax	/*jump_cursor.opt().get_jumpable_column()*
 jump_cursor.opt().get_jumpable_line()	jump_cursor.jax	/*jump_cursor.opt().get_jumpable_line()*
-jump_cursor.opt().get_line()	jump_cursor.jax	/*jump_cursor.opt().get_line()*
-jump_cursor.opt().get_position()	jump_cursor.jax	/*jump_cursor.opt().get_position()*
 jump_cursor.opt().jump()	jump_cursor.jax	/*jump_cursor.opt().jump()*
+jump_cursor.opt().select_column()	jump_cursor.jax	/*jump_cursor.opt().select_column()*
+jump_cursor.opt().select_line()	jump_cursor.jax	/*jump_cursor.opt().select_line()*
+jump_cursor.opt().select_position()	jump_cursor.jax	/*jump_cursor.opt().select_position()*
