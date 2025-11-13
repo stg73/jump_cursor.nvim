@@ -87,7 +87,7 @@ jump_cursor.opt({opts})                                    *jump_cursor.opt()*
         marks = "1234567890", -- ジャンプに使う文字
     }).jump()
     -- キーマップして使う
-    vim.keymap.set("n","<leader>j",require("jump_cursor").opt().jump)
+    vim.keymap.set({"n","v"},"<leader>j",require("jump_cursor").opt().jump)
 <
 
     引数: ~
