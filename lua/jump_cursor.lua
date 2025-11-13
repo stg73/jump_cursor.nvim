@@ -149,7 +149,7 @@ function M.opt(opts)
     function N.jump()
         local pos = N.select_position(vim.fn.line("w0"),vim.fn.line("w$"))
         if pos then
-            vim.fn.cursor(pos[1],pos[2])
+            vim.fn.cursor(pos)
         end
     end
 
