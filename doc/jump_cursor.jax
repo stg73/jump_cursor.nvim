@@ -22,7 +22,7 @@ luaの `regex` モジュールが必要
 基本的には `jumpcursor.vim` と同じなので 以下を見たら分かる
 https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 
-|jump_cursor.opt().jump()| を実行する -> 行ごとにラベルで塗り潰される
+|jump_cursor.opt().jump()| を実行する -> 複数行が行ごとにラベルで塗り潰される
 移動したい行のラベルを入力する -> その行が列ごとにラベルで塗り潰される
 移動したい列のラベルを入力する -> その位置にカーソルが移動する
 
@@ -34,7 +34,7 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
     fugafugafuga
     piyo piyo
 <
-関数を実行
+|jump_cursor.opt().jump()| を実行
 >
     a|aaa
     bbbbbbbbbbbb
@@ -46,7 +46,7 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
     fugafugafuga
     abcd efgh
 
-"f"を入力
+"f"を入力 カーソルが移動する
 >
     hoge
     fugafugafuga
@@ -71,7 +71,7 @@ jumpcursor.vim との違い                               *jump_cursor-differenc
 
 カスタマイズにグローバル変数を使わず引数を使う
 
-luaで書かれている
+luaモジュールである
 
 ==============================================================================
 関数                                                    *jump_cursor-function*
@@ -132,7 +132,7 @@ select_column({line})                      *jump_cursor.opt().select_column()*
         (`integer`) 選択された列
 
 select_line({start},{end})                   *jump_cursor.opt().select_line()*
-    範囲をハイライトして行を選択させる
+    複数行をハイライトして行を選択させる
 
     引数: ~
       • {start}  (`integer`) 開始行
@@ -142,7 +142,7 @@ select_line({start},{end})                   *jump_cursor.opt().select_line()*
         (`integer`) 選択された行
 
 select_position({start},{end})           *jump_cursor.opt().select_position()*
-    範囲をハイライトして位置を選択させる
+    複数行をハイライトして位置を選択させる
 
     引数: ~
       • {start}  (`integer`) 開始行
