@@ -154,5 +154,5 @@ select_position({buf},{start},{end})     *jump_cursor.opt().select_position()*
     返値: ~
         (`integer[]`) 選択された位置  行と列の組み合わせ
 
-------------------------------------------------------------------------------
- vi:tw=78:ts=4:ft=help:norl:et
+
+ vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
