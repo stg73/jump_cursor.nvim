@@ -64,10 +64,10 @@ function M.opt(opts)
 
     -- 特定の行を列別に塗り潰し 文字が入力されたらそれに対応する列を返す
     -- integer -> integer
-    function N.select_column(line)
-        local jumpable = N.get_jumpable_column(vim.fn.getline(line))
+    function N.select_column(buf,line)
+        local jumpable = N.get_jumpable_column(vim.api.nvim_buf_get_lines(buf,line - 1,line,false)[1])
         local function loop(i)
-            vim.api.nvim_buf_set_extmark(0,name_space,line - 1,jumpable[i] - 1,{
+            vim.api.nvim_buf_set_extmark(buf,name_space,line - 1,jumpable[i] - 1,{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[i], hl_group }
@@ -83,7 +83,7 @@ function M.opt(opts)
         vim.cmd.redraw()
 
         local mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(0,name_space,line - 1,line)
+        vim.api.nvim_buf_clear_namespace(buf,name_space,line - 1,line)
         local mark_index = r.find("/V" .. mark)(marks)
         local column = jumpable[mark_index]
 
@@ -92,13 +92,13 @@ function M.opt(opts)
 
     -- 特定の範囲を行別に塗り潰し 文字が入力されたらそれに対応する行を返す
     -- integer, integer -> integer
-    function N.select_line(s,e)
-        local lines = vim.api.nvim_buf_get_lines(0,s - 1,e,false)
+    function N.select_line(buf,s,e)
+        local lines = vim.api.nvim_buf_get_lines(buf,s - 1,e,false)
         local jumpable_line = N.get_jumpable_line(lines)
         local function loop_line(l)
             local jumpable = N.get_jumpable_column(lines[jumpable_line[l]])
             local function loop_column(c)
-                vim.api.nvim_buf_set_extmark(0,name_space,jumpable_line[l] + s - 2,jumpable[c] - 1,{
+                vim.api.nvim_buf_set_extmark(buf,name_space,jumpable_line[l] + s - 2,jumpable[c] - 1,{
                     virt_text_pos = "overlay",
                     virt_text = {
                         { mark_table[l], hl_group }
@@ -121,7 +121,7 @@ function M.opt(opts)
         vim.cmd.redraw()
 
         local mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(0,name_space,s - 1,e)
+        vim.api.nvim_buf_clear_namespace(buf,name_space,s - 1,e)
         local mark_index = r.find("/V" .. mark)(marks)
         local line = jumpable_line[mark_index]
 
@@ -131,10 +131,10 @@ function M.opt(opts)
     end
 
     -- integer, integer -> integer[]
-    function N.select_position(s,e)
-        local line = N.select_line(s,e)
+    function N.select_position(buf,s,e)
+        local line = N.select_line(buf,s,e)
         if line then
-            local column = N.select_column(line)
+            local column = N.select_column(buf,line)
             if column then
                 return { line, column }
             else
@@ -147,7 +147,7 @@ function M.opt(opts)
 
     -- 本体
     function N.jump()
-        local pos = N.select_position(vim.fn.line("w0"),vim.fn.line("w$"))
+        local pos = N.select_position(0,vim.fn.line("w0"),vim.fn.line("w$"))
         if pos then
             vim.fn.cursor(pos)
         end
