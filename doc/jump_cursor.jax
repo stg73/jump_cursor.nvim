@@ -53,7 +53,7 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
     piyo p|iyo
 <
 
-カスタマイズなどについては |jump_cursor.jump()| を参照
+カスタマイズなどについては |jump_cursor.opt()| を参照
 
 ==============================================================================
 jumpcursor.vim との違い                               *jump_cursor-difference*
