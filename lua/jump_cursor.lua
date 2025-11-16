@@ -42,9 +42,11 @@ function M.opt(opts)
         local t = {}
 
         local function loop(byte,str)
-            -- string.match だとマルチバイトに対応できない
-            local char = r.match(".")(str)
-            local rest = r.match(".@<=(.+)")(str)
+            -- string.find だとマルチバイトに対応できない
+            local s,e = r.find(".")(str)
+            local char = string.sub(str,s,e)
+            local rest = string.sub(str,e + 1)
+
             local char_column = byte + 1
             local char_byte = string.len(char) -- マルチバイトに対応するためバイト数を取得する
 
@@ -52,7 +54,7 @@ function M.opt(opts)
                 table.insert(t,char_column)
             end
 
-            if rest then
+            if rest ~= "" then
                 loop(byte + char_byte,rest)
             end
         end
