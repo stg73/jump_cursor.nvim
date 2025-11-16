@@ -5,7 +5,7 @@ local r = require("regex")
 function M.opt(opts)
     -- オプション
     local opts = opts or {}
-    local marks = opts.marks or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.<>-+=;:*[]{}@`\\_1234567890/^!\"#$%&'()?~|"
+    local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ:*[]{}@`\\_1234567890/^!\"#$%&'()?~|"
     local hl_group = opts.hl_group or "special"
     local ignore = opts.ignore or "/s"
 
