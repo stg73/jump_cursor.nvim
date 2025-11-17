@@ -16,8 +16,7 @@ function M.opt(opts)
     local N = {} -- "M" の次の文字
 
     -- ジャンプできる位置のリストを取得する
-    function N.get_pos_table(buf,s_line,e_line)
-        local str = table.concat(vim.api.nvim_buf_get_lines(buf,s_line - 1,e_line,false),"\n")
+    function N.get_pos_table(str)
         local t = {}
 
         local function loop(line,column,str)
@@ -32,7 +31,7 @@ function M.opt(opts)
                 line = line + 1
                 column = -1
             elseif not r.is(ignore)(char) then -- ジャンプできる文字であれば
-                table.insert(t,{ line + s_line - 1, char_column }) -- その文字の位置(行 列)を格納
+                table.insert(t,{ line, char_column }) -- その文字の位置(行 列)を格納
             end
 
             if rest ~= "" then
@@ -46,13 +45,13 @@ function M.opt(opts)
     end
 
     function N.select_position(buf,s,e)
-        local pos_table = N.get_pos_table(buf,s,e)
+        local pos_table = N.get_pos_table(table.concat(vim.api.nvim_buf_get_lines(buf,s - 1,e,false),"\n"))
         local function loop(i)
             local mark = mark_table[math.floor((i - 1)/mark_len) + 1]
             if mark == nil then
                 return
             end
-            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i][1] - 1,pos_table[i][2] - 1,{
+            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i][1] - 2 + s,pos_table[i][2] - 1,{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark, hl_group },
@@ -80,7 +79,7 @@ function M.opt(opts)
         end
 
         local function loop(i)
-            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i + pos_index - 1][1] - 1,pos_table[i + pos_index - 1][2] - 1,{
+            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i + pos_index - 1][1] - 2 + s,pos_table[i + pos_index - 1][2] - 1,{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[i], hl_group },
@@ -104,6 +103,7 @@ function M.opt(opts)
         local pos_index = pos_index + mark_index - 1
         local pos = pos_table[pos_index]
 
+        pos[1] = pos[1] + s - 1
         return pos
     end
 
