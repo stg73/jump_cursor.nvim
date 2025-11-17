@@ -42,11 +42,10 @@ function M.opt(opts)
             local char = string.sub(str,s,e)
             local rest = string.sub(str,e + 1)
 
-            local char_column = byte + 1
             local char_byte = string.len(char) -- バイト数を取得する
 
             if not r.is(ignore)(char) then -- ジャンプできる文字であれば
-                table.insert(t,char_column)
+                table.insert(t,byte)
             end
 
             if rest ~= "" then
@@ -62,7 +61,7 @@ function M.opt(opts)
     function N.select_column(buf,line)
         local jumpable = N.get_jumpable_column(vim.api.nvim_buf_get_lines(buf,line - 1,line,false)[1])
         local function loop(i)
-            vim.api.nvim_buf_set_extmark(buf,name_space,line - 1,jumpable[i] - 1,{
+            vim.api.nvim_buf_set_extmark(buf,name_space,line - 1,jumpable[i],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[i], hl_group }
@@ -91,7 +90,7 @@ function M.opt(opts)
         local function loop_line(l)
             local jumpable = N.get_jumpable_column(lines[jumpable_line[l]])
             local function loop_column(c)
-                vim.api.nvim_buf_set_extmark(buf,name_space,jumpable_line[l] + s - 2,jumpable[c] - 1,{
+                vim.api.nvim_buf_set_extmark(buf,name_space,jumpable_line[l] + s - 2,jumpable[c],{
                     virt_text_pos = "overlay",
                     virt_text = {
                         { mark_table[l], hl_group }
@@ -140,7 +139,7 @@ function M.opt(opts)
     function N.jump()
         local pos = N.select_position(0,vim.fn.line("w0"),vim.fn.line("w$"))
         if pos then
-            vim.fn.cursor(pos)
+            vim.api.nvim_win_set_cursor(0,pos)
         end
     end
 
