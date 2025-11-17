@@ -159,7 +159,10 @@ select_position({buf},{start},{end})     *jump_cursor.opt().select_position()*
 select_position                                              *select_position*
 
 `jump_cursor` の改善
-マークの振り方を変え マークが不足しづらくなっている
+`jump_cursor` は行指向なので 行が長すぎると後ろの列にはマークを割り当てられな
+くなる それに対し `select_position` は行を無視するので 一切の無駄なくマークを
+割り当てることが可能
+使うマークを減らすことができ 打ちづらいキーをマークとして使わずにすむ
 
 select_position.opt({opts})                            *select_position.opt()*
     オプションを設定する
