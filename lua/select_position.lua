@@ -75,6 +75,9 @@ function M.opt(opts)
         end
 
         local pos_index = (mark_index - 1) * mark_len + 1
+        if pos_table[pos_index] == nil then
+            return
+        end
 
         local function loop(i)
             vim.api.nvim_buf_set_extmark(buf,2,pos_table[i + pos_index - 1][1] - 1,pos_table[i + pos_index - 1][2] - 1,{
