@@ -23,7 +23,7 @@ function M.opt(opts)
                 return
             end
 
-            local s,e = r.find(".")(str)
+            local s,e = r.find(".")(str) -- string.findはマルチバイトに対応していない
             local char = string.sub(str,s,e)
             local rest = string.sub(str,e + 1)
 
@@ -33,7 +33,7 @@ function M.opt(opts)
                 loop(line + 1,0,rest)
             else
                 if not r.is(ignore)(char) then -- ジャンプできる文字であれば
-                    table.insert(t,{ line, column }) -- その文字の位置(行 列)を格納
+                    table.insert(t,{ line, column }) -- その文字の位置(行と列)を格納
                 end
 
                 loop(line,column + char_byte,rest)
@@ -50,8 +50,8 @@ function M.opt(opts)
         local pos_table = N.get_pos_table(buf_content)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
-        local mark_len = math.ceil(math.sqrt(#pos_table))
-        marks = string.sub(marks,1,mark_len)
+        local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
+        marks = string.sub(marks,1,mark_len) -- その数に切り詰める
 
         local function loop(i)
             local mark = mark_table[math.floor((i - 1)/mark_len) + 1]
@@ -111,10 +111,10 @@ function M.opt(opts)
         if mark_index == nil then
             return
         end
-        local pos_index = pos_index + mark_index - 1
+        local pos_index = pos_index + mark_index - 1 -- 選択された位置
         local pos = pos_table[pos_index]
 
-        pos[1] = pos[1] + s
+        pos[1] = pos[1] + s -- 行のずれを修正
         return pos
     end
 
