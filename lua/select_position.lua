@@ -61,7 +61,7 @@ function M.opt(opts)
             end
 
             local pos = pos_table[i]
-            vim.api.nvim_buf_set_extmark(buf,2,pos[1] - 1 + s,pos[2],{
+            vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + s,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark, hl_group },
@@ -77,7 +77,7 @@ function M.opt(opts)
         vim.cmd.redraw()
 
         local mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(buf,2,s,e)
+        vim.api.nvim_buf_clear_namespace(buf,name_space,s,e)
         local mark_index = r.find("/V" .. mark)(marks)
         if mark_index == nil then
             return
@@ -90,7 +90,7 @@ function M.opt(opts)
 
         local function loop(i)
             local pos = pos_table[i + pos_index - 1]
-            vim.api.nvim_buf_set_extmark(buf,2,pos[1] - 1 + s,pos[2],{
+            vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + s,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[i], hl_group },
@@ -106,7 +106,7 @@ function M.opt(opts)
         vim.cmd.redraw()
 
         local mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(buf,2,s,e)
+        vim.api.nvim_buf_clear_namespace(buf,name_space,s,e)
         local mark_index = r.find("/V" .. mark)(marks)
         if mark_index == nil then
             return
