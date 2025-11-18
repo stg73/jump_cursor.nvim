@@ -44,13 +44,13 @@ function M.opt(opts)
     end
 
     function N.select_position(buf,s,e)
-        local pos_table = N.get_pos_table(table.concat(vim.api.nvim_buf_get_lines(buf,s - 1,e,false),"\n"))
+        local pos_table = N.get_pos_table(table.concat(vim.api.nvim_buf_get_lines(buf,s,e,false),"\n"))
         local function loop(i)
             local mark = mark_table[math.floor((i - 1)/mark_len) + 1]
             if mark == nil then
                 return
             end
-            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i][1] - 2 + s,pos_table[i][2],{
+            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i][1] - 1 + s,pos_table[i][2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark, hl_group },
@@ -66,7 +66,7 @@ function M.opt(opts)
         vim.cmd.redraw()
 
         local mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(buf,2,s - 1,e)
+        vim.api.nvim_buf_clear_namespace(buf,2,s,e)
         local mark_index = r.find("/V" .. mark)(marks)
         if mark_index == nil then
             return
@@ -78,7 +78,7 @@ function M.opt(opts)
         end
 
         local function loop(i)
-            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i + pos_index - 1][1] - 2 + s,pos_table[i + pos_index - 1][2],{
+            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i + pos_index - 1][1] - 1 + s,pos_table[i + pos_index - 1][2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[i], hl_group },
@@ -94,7 +94,7 @@ function M.opt(opts)
         vim.cmd.redraw()
 
         local mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(buf,2,s - 1,e)
+        vim.api.nvim_buf_clear_namespace(buf,2,s,e)
         local mark_index = r.find("/V" .. mark)(marks)
         if mark_index == nil then
             return
@@ -102,12 +102,12 @@ function M.opt(opts)
         local pos_index = pos_index + mark_index - 1
         local pos = pos_table[pos_index]
 
-        pos[1] = pos[1] + s - 1
+        pos[1] = pos[1] + s
         return pos
     end
 
     function N.jump()
-        local pos = N.select_position(0,vim.fn.line("w0"),vim.fn.line("w$"))
+        local pos = N.select_position(0,vim.fn.line("w0") - 1,vim.fn.line("w$"))
         if pos then
             vim.api.nvim_win_set_cursor(0,pos)
         end
