@@ -19,6 +19,10 @@ function M.opt(opts)
         local t = {}
 
         local function loop(line,column,str)
+            if str == "" then
+                return
+            end
+
             local s,e = r.find(".")(str)
             local char = string.sub(str,s,e)
             local rest = string.sub(str,e + 1)
@@ -26,13 +30,12 @@ function M.opt(opts)
             local char_byte = string.len(char) -- バイト数を取得する
 
             if char == "\n" then
-                line = line + 1
-                column = -1
-            elseif not r.is(ignore)(char) then -- ジャンプできる文字であれば
-                table.insert(t,{ line, column }) -- その文字の位置(行 列)を格納
-            end
+                loop(line + 1,0,rest)
+            else
+                if not r.is(ignore)(char) then -- ジャンプできる文字であれば
+                    table.insert(t,{ line, column }) -- その文字の位置(行 列)を格納
+                end
 
-            if rest ~= "" then
                 loop(line,column + char_byte,rest)
             end
         end
@@ -43,7 +46,8 @@ function M.opt(opts)
     end
 
     function N.select_position(buf,s,e)
-        local pos_table = N.get_pos_table(table.concat(vim.api.nvim_buf_get_lines(buf,s,e,false),"\n"))
+        local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,s,e,false),"\n")
+        local pos_table = N.get_pos_table(buf_content)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#pos_table))
@@ -51,10 +55,13 @@ function M.opt(opts)
 
         local function loop(i)
             local mark = mark_table[math.floor((i - 1)/mark_len) + 1]
+
             if mark == nil then
                 return
             end
-            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i][1] - 1 + s,pos_table[i][2],{
+
+            local pos = pos_table[i]
+            vim.api.nvim_buf_set_extmark(buf,2,pos[1] - 1 + s,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark, hl_group },
@@ -82,7 +89,8 @@ function M.opt(opts)
         end
 
         local function loop(i)
-            vim.api.nvim_buf_set_extmark(buf,2,pos_table[i + pos_index - 1][1] - 1 + s,pos_table[i + pos_index - 1][2],{
+            local pos = pos_table[i + pos_index - 1]
+            vim.api.nvim_buf_set_extmark(buf,2,pos[1] - 1 + s,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[i], hl_group },
