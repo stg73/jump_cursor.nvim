@@ -10,7 +10,6 @@ function M.opt(opts)
     local ignore = opts.ignore or "/s"
 
     local mark_table = vim.split(marks,"")
-    local mark_len = string.len(marks)
     local name_space = vim.api.nvim_create_namespace("jump_cursor")
 
     local N = {} -- "M" の次の文字
@@ -45,6 +44,11 @@ function M.opt(opts)
 
     function N.select_position(buf,s,e)
         local pos_table = N.get_pos_table(table.concat(vim.api.nvim_buf_get_lines(buf,s,e,false),"\n"))
+
+        -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
+        local mark_len = math.ceil(math.sqrt(#pos_table))
+        marks = string.sub(marks,1,mark_len)
+
         local function loop(i)
             local mark = mark_table[math.floor((i - 1)/mark_len) + 1]
             if mark == nil then
