@@ -53,72 +53,91 @@ function M.opt(opts)
         local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
         local marks = string.sub(opts.marks,1,mark_len) -- その数に切り詰める
 
-        local function loop(pos_idx)
-            local mark = mark_table[math.floor((pos_idx - 1)/mark_len) + 1]
+        local function select_section()
+            local function loop(pos_idx)
+                local mark = mark_table[math.floor((pos_idx - 1)/mark_len) + 1]
 
-            if mark == nil then
-                return
+                if mark == nil then
+                    return
+                end
+
+                local pos = pos_table[pos_idx]
+                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + start_line,pos[2],{
+                    virt_text_pos = "overlay",
+                    virt_text = {
+                        { mark, hl_group },
+                    },
+                })
+
+                if pos_table[pos_idx + 1] then
+                    loop(pos_idx + 1)
+                end
             end
 
-            local pos = pos_table[pos_idx]
-            vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + start_line,pos[2],{
-                virt_text_pos = "overlay",
-                virt_text = {
-                    { mark, hl_group },
-                },
-            })
+            loop(1)
+            vim.cmd.redraw()
 
-            if pos_table[pos_idx + 1] then
-                loop(pos_idx + 1)
+            local selected_mark = vim.fn.getcharstr()
+            vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
+            local selected_mark_idx = r.find("/V" .. selected_mark)(marks)
+            if selected_mark_idx == nil then
+                return nil
             end
-        end
 
-        loop(1)
-        vim.cmd.redraw()
-
-        local selected_mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
-        local selected_mark_idx = r.find("/V" .. selected_mark)(marks)
-        if selected_mark_idx == nil then
-            return nil
-        end
-
-        local selected_pos_idx = (selected_mark_idx - 1) * mark_len + 1
-        if pos_table[selected_pos_idx] == nil then
-            return nil
-        end
-
-        local function loop(pos_idx)
-            local pos = pos_table[pos_idx + selected_pos_idx - 1]
-            vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + start_line,pos[2],{
-                virt_text_pos = "overlay",
-                virt_text = {
-                    { mark_table[pos_idx], hl_group },
-                },
-            })
-
-            if pos_idx < mark_len and pos_table[pos_idx + selected_pos_idx] then
-                loop(pos_idx + 1)
+            local selected_pos_idx = (selected_mark_idx - 1) * mark_len + 1
+            if pos_table[selected_pos_idx] == nil then
+                return nil
             end
+
+            return selected_mark_idx
         end
 
-        loop(1)
-        vim.cmd.redraw()
+        local function select_column(section_idx)
+            local selected_pos_idx = (section_idx - 1) * mark_len + 1
 
-        local selected_mark = vim.fn.getcharstr()
-        vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
-        local selected_mark_idx = r.find("/V" .. selected_mark)(marks)
-        if selected_mark_idx == nil then
+            local function loop(pos_idx)
+                local pos = pos_table[pos_idx + selected_pos_idx - 1]
+                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + start_line,pos[2],{
+                    virt_text_pos = "overlay",
+                    virt_text = {
+                        { mark_table[pos_idx], hl_group },
+                    },
+                })
+
+                if pos_idx < mark_len and pos_table[pos_idx + selected_pos_idx] then
+                    loop(pos_idx + 1)
+                end
+            end
+
+            loop(1)
+            vim.cmd.redraw()
+
+            local selected_mark = vim.fn.getcharstr()
+            vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
+            local section_idx = r.find("/V" .. selected_mark)(marks)
+            if section_idx == nil then
+                return nil
+            end
+            local selected_pos = selected_pos_idx + section_idx - 1
+            local pos = pos_table[selected_pos]
+            if pos == nil then
+                return nil
+            end
+
+            return pos
+        end
+
+        local section = select_section()
+        if section == nil then
             return nil
         end
-        local selected_pos = selected_pos_idx + selected_mark_idx - 1
-        local pos = pos_table[selected_pos]
-        if pos == nil then
+        local pos = select_column(section)
+        if pos then
+            pos[1] = pos[1] + start_line -- 行のずれを修正
+            return pos
+        else
             return nil
         end
-
-        pos[1] = pos[1] + start_line -- 行のずれを修正
-        return pos
     end
 
     function N.jump()
