@@ -80,12 +80,12 @@ function M.opt(opts)
         vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
         local selected_mark_idx = r.find("/V" .. selected_mark)(marks)
         if selected_mark_idx == nil then
-            return
+            return nil
         end
 
         local selected_pos_idx = (selected_mark_idx - 1) * mark_len + 1
         if pos_table[selected_pos_idx] == nil then
-            return
+            return nil
         end
 
         local function loop(pos_idx)
@@ -109,10 +109,13 @@ function M.opt(opts)
         vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
         local selected_mark_idx = r.find("/V" .. selected_mark)(marks)
         if selected_mark_idx == nil then
-            return
+            return nil
         end
         local selected_pos = selected_pos_idx + selected_mark_idx - 1
         local pos = pos_table[selected_pos]
+        if pos == nil then
+            return nil
+        end
 
         pos[1] = pos[1] + start_line -- 行のずれを修正
         return pos
