@@ -5,11 +5,11 @@ local r = require("regex")
 function M.opt(opts)
     -- オプション
     local opts = opts or {}
-    local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
+    opts.marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
     local hl_group = opts.hl_group or "special"
     local ignore = opts.ignore or "/s"
 
-    local mark_table = vim.split(marks,"")
+    local mark_table = vim.split(opts.marks,"")
     local name_space = vim.api.nvim_create_namespace("jump_cursor")
 
     local N = {} -- "M" の次の文字
@@ -51,7 +51,7 @@ function M.opt(opts)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
-        marks = string.sub(marks,1,mark_len) -- その数に切り詰める
+        local marks = string.sub(opts.marks,1,mark_len) -- その数に切り詰める
 
         local function loop(pos_idx)
             local mark = mark_table[math.floor((pos_idx - 1)/mark_len) + 1]
