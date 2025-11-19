@@ -15,7 +15,8 @@ function M.opt(opts)
     local N = {} -- "M" の次の文字
 
     -- ジャンプできる位置のリストを取得する
-    function N.get_pos_table(str)
+    function N.get_pos_table(str,start)
+        start = start or 0
         local t = {}
 
         local function loop(line,column,str)
@@ -33,7 +34,7 @@ function M.opt(opts)
                 loop(line + 1,0,rest)
             else
                 if not r.is(ignore)(char) then -- ジャンプできる文字であれば
-                    table.insert(t,{ line, column }) -- その文字の位置(行と列)を格納
+                    table.insert(t,{ line + start, column }) -- その文字の位置(行と列)を格納
                 end
 
                 loop(line,column + char_byte,rest)
@@ -47,7 +48,7 @@ function M.opt(opts)
 
     function N.select_position(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
-        local pos_table = N.get_pos_table(buf_content)
+        local pos_table = N.get_pos_table(buf_content,start_line)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
@@ -62,7 +63,7 @@ function M.opt(opts)
                 end
 
                 local pos = pos_table[pos_idx]
-                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + start_line,pos[2],{
+                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
                     virt_text_pos = "overlay",
                     virt_text = {
                         { mark, hl_group },
@@ -97,7 +98,7 @@ function M.opt(opts)
 
             local function loop(pos_idx)
                 local pos = pos_table[pos_idx + selected_pos_idx - 1]
-                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1 + start_line,pos[2],{
+                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
                     virt_text_pos = "overlay",
                     virt_text = {
                         { mark_table[pos_idx], hl_group },
@@ -119,25 +120,15 @@ function M.opt(opts)
                 return nil
             end
             local selected_pos = selected_pos_idx + section_idx - 1
-            local pos = pos_table[selected_pos]
-            if pos == nil then
-                return nil
-            end
 
-            return pos
+            return pos_table[selected_pos]
         end
 
         local section = select_section()
         if section == nil then
             return nil
         end
-        local pos = select_column(section)
-        if pos then
-            pos[1] = pos[1] + start_line -- 行のずれを修正
-            return pos
-        else
-            return nil
-        end
+        return select_column(section)
     end
 
     function N.jump()
