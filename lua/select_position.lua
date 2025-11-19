@@ -28,8 +28,6 @@ function M.opt(opts)
             local char = string.sub(str,s,e)
             local rest = string.sub(str,e + 1)
 
-            local char_byte = string.len(char) -- バイト数を取得する
-
             if char == "\n" then
                 loop(line + 1,0,rest)
             else
@@ -37,7 +35,7 @@ function M.opt(opts)
                     table.insert(t,{ line + start, column }) -- その文字の位置(行と列)を格納
                 end
 
-                loop(line,column + char_byte,rest)
+                loop(line,column + string.len(char),rest)
             end
         end
 
