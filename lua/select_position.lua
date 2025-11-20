@@ -129,10 +129,16 @@ function M.opt(opts)
         end
     end
 
-    function N.jump()
-        local pos = N.select_position(0,vim.fn.line("w0") - 1,vim.fn.line("w$"))
+    function N.jump(win,set_win)
+        win = win or 0
+        local buf = vim.api.nvim_win_get_buf(win)
+        local info = vim.fn.getwininfo(win ~= 0 and win or vim.api.nvim_get_current_win())[1]
+        local pos = N.select_position(buf,info.topline - 1,info.botline)
         if pos then
-            vim.api.nvim_win_set_cursor(0,pos)
+            vim.api.nvim_win_set_cursor(win,pos)
+            if set_win then
+                vim.api.nvim_set_current_win(win)
+            end
         end
     end
 

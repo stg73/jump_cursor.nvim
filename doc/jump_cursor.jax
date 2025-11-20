@@ -190,8 +190,13 @@ select_position({buf},{start},{end}) *select_position.opt().select_position()*
     返り値: ~
         (`integer[]`) 選択された位置 行と列の組
 
-jump()                                          *select_position.opt().jump()*
+jump({window},{set_win})                        *select_position.opt().jump()*
     ジャンプする
+
+    引数: ~
+      • {window}   (`integer?`, 既定: `0`) ウィンドウ
+        |window-ID| もしくは 現在のウィンドウを表す 0
+      • {set_win}  (`boolean?`, 既定: `false`) ウィンドウも移動する
 
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
