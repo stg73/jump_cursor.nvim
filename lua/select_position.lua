@@ -5,14 +5,18 @@ local r = require("regex")
 function M.opt(opts)
     -- オプション
     local opts = opts or {}
-    opts.marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
+    local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
     local hl_group = opts.hl_group or "special"
     local ignore = opts.ignore or "/s"
 
-    local mark_table = vim.split(opts.marks,"")
+    local mark_table = vim.split(marks,"")
     local name_space = vim.api.nvim_create_namespace("jump_cursor")
 
     local N = {} -- "M" の次の文字
+
+    function N.mark_to_number(mark)
+        return r.find("/V" .. mark)(marks) or math.huge
+    end
 
     -- ジャンプできる位置のリストを取得する
     function N.get_pos_table(str,start)
@@ -50,21 +54,14 @@ function M.opt(opts)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
-        local marks = string.sub(opts.marks,1,mark_len) -- その数に切り詰める
 
         local function select_section()
             local function loop(pos_idx)
-                local mark = mark_table[math.floor((pos_idx - 1)/mark_len) + 1]
-
-                if mark == nil then
-                    return
-                end
-
                 local pos = pos_table[pos_idx]
                 vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
                     virt_text_pos = "overlay",
                     virt_text = {
-                        { mark, hl_group },
+                        { mark_table[math.floor((pos_idx - 1)/mark_len) + 1], hl_group },
                     },
                 })
 
@@ -78,24 +75,26 @@ function M.opt(opts)
 
             local selected_mark = vim.fn.getcharstr()
             vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
-            local selected_mark_idx = r.find("/V" .. selected_mark)(marks)
-            if selected_mark_idx == nil then
+            local selected_section = N.mark_to_number(selected_mark)
+
+            local section_len = math.ceil(#pos_table/mark_len)
+            if selected_section <= section_len then
+                return selected_section
+            else
                 return nil
             end
-
-            local selected_pos_idx = (selected_mark_idx - 1) * mark_len + 1
-            if pos_table[selected_pos_idx] == nil then
-                return nil
-            end
-
-            return selected_mark_idx
         end
 
-        local function select_column(section_idx)
-            local selected_pos_idx = (section_idx - 1) * mark_len + 1
+        local function select_position_from_section(section)
+            local start_pos = (section - 1) * mark_len + 1
 
             local function loop(pos_idx)
-                local pos = pos_table[pos_idx + selected_pos_idx - 1]
+                local pos = pos_table[pos_idx + start_pos - 1]
+
+                if pos == nil then
+                    return
+                end
+
                 vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
                     virt_text_pos = "overlay",
                     virt_text = {
@@ -103,7 +102,7 @@ function M.opt(opts)
                     },
                 })
 
-                if pos_idx < mark_len and pos_table[pos_idx + selected_pos_idx] then
+                if pos_idx < mark_len then
                     loop(pos_idx + 1)
                 end
             end
@@ -113,20 +112,21 @@ function M.opt(opts)
 
             local selected_mark = vim.fn.getcharstr()
             vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
-            local section_idx = r.find("/V" .. selected_mark)(marks)
-            if section_idx == nil then
+            local selected_column = N.mark_to_number(selected_mark)
+            if selected_column <= mark_len then
+                local selected_pos = start_pos + selected_column - 1
+                return pos_table[selected_pos]
+            else
                 return nil
             end
-            local selected_pos = selected_pos_idx + section_idx - 1
-
-            return pos_table[selected_pos]
         end
 
         local section = select_section()
-        if section == nil then
+        if section then
+            return select_position_from_section(section)
+        else
             return nil
         end
-        return select_column(section)
     end
 
     function N.jump()
