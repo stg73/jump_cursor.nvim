@@ -129,7 +129,7 @@ function M.opt(opts)
         end
     end
 
-    function N.jump(win,set_win)
+    function N.set_cursor(win,set_win)
         win = win or 0
         local buf = vim.api.nvim_win_get_buf(win)
         local info = vim.fn.getwininfo(win ~= 0 and win or vim.api.nvim_get_current_win())[1]

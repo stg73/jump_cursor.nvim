@@ -190,7 +190,7 @@ select_position({buf},{start},{end}) *select_position.opt().select_position()*
     返り値: ~
         (`integer[]`) 選択された位置 行と列の組
 
-jump({window},{set_win})                        *select_position.opt().jump()*
+set_cursor({window},{set_win})            *select_position.opt().set_cursor()*
     ジャンプする
 
     引数: ~

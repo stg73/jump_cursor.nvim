@@ -13,5 +13,5 @@ jump_cursor.opt().select_line()	jump_cursor.jax	/*jump_cursor.opt().select_line(
 jump_cursor.opt().select_position()	jump_cursor.jax	/*jump_cursor.opt().select_position()*
 select_position	jump_cursor.jax	/*select_position*
 select_position.opt()	jump_cursor.jax	/*select_position.opt()*
-select_position.opt().jump()	jump_cursor.jax	/*select_position.opt().jump()*
 select_position.opt().select_position()	jump_cursor.jax	/*select_position.opt().select_position()*
+select_position.opt().set_cursor()	jump_cursor.jax	/*select_position.opt().set_cursor()*
