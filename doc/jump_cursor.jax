@@ -22,9 +22,9 @@ luaの `regex` モジュールが必要
 基本的には `jumpcursor.vim` と同じなので 以下を見たら分かる
 https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 
-|jump_cursor.opt().jump()| を実行する -> 複数行が行ごとにラベルで塗り潰される
-移動したい行のラベルを入力する -> その行が列ごとにラベルで塗り潰される
-移動したい列のラベルを入力する -> その位置にカーソルが移動する
+|select_position.opt().set_cursor()| を実行する -> バッファがラベルで塗り潰される
+移動したい位置のラベルを入力する -> バッファがラベルで塗り潰される
+移動したい位置のラベルを入力する -> その位置にカーソルが移動する
 
 例: "|" はカーソル
 
@@ -34,35 +34,31 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
     fugafugafuga
     piyo piyo
 <
-|jump_cursor.opt().jump()| を実行
+|select_position.opt().set_cursor()| を実行
 >
     a|aaa
-    bbbbbbbbbbbb
-    cccc cccc
+    aoooootttttn
+    nnnn ssss
 <
-"c"を入力
+"a"を入力
 >
-    h|oge
-    fugafugafuga
-    abcd efgh
+    a|otn
+    sugafugafuga
+    piyo piyo
 
-"f"を入力 カーソルが移動する
+"s"を入力 カーソルが移動する
 >
     hoge
-    fugafugafuga
-    piyo p|iyo
+    |fugafugafuga
+    piyo piyo
 <
 
-カスタマイズなどについては |jump_cursor.opt()| を参照
+カスタマイズなどについては |select_position.opt()| を参照
 
 ==============================================================================
 jumpcursor.vim との違い                               *jump_cursor-difference*
 
 マルチバイトに対応している
-
-ハイライト方法:
-    ジャンプできない列は行ごとの塗り潰しの段階でも塗り潰さない
-    ジャンプできない行はラベルを飛ばす
 
 カスタマイズできる:
     ハイライトグループ
@@ -71,102 +67,31 @@ jumpcursor.vim との違い                               *jump_cursor-differenc
 
 カスタマイズにグローバル変数を使わず引数を使う
 
+行を無視するので 一切の無駄なくマークを割り当てることが可能
+
 luaモジュールである
+
+関数の参照透過性が高い
 
 ==============================================================================
 関数                                                    *jump_cursor-function*
 
-jump_cursor.opt({opts})                                    *jump_cursor.opt()*
-    関数のテーブルを返す
-    {opts} で挙動を変更できる
->lua
-    -- ジャンプする
-    require("jump_cursor").opt().jump()
-    -- 挙動をカスタマイズ
-    require("jump_cursor").opt({
-        hl_group = "error", -- エラーの色でハイライトする
-        ignore = "", -- 全ての文字にジャンプする
-        marks = "1234567890", -- ジャンプに使う文字
-    }).jump()
-    -- キーマップして使う
-    vim.keymap.set({"n","v"},"<leader>j",require("jump_cursor").opt().jump)
-<
-
-    引数: ~
-        {opts}  (`table?`) オプション 以下を含む
-                • {hl_group}? (`string|number`, 既定: `"special"`)
-                  ハイライトグループ
-                • {marks}? (`string`, 既定: "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ:*[]{}@`\\_1234567890/^!\"#$%&'()?~|")
-                  既定値は大西配列で入力しやすい順
-                • {ignore}? (`string`, 既定: `"/s"`) ジャンプしない文字
-                  モジュール `regex` の形式の正規表現
-
-    返値: ~
-        (`table`) 以下を含むテーブル 重要なものは `jump()` だけ
-
-jump()                                              *jump_cursor.opt().jump()*
-    ジャンプする
-
-get_jumpable_column({text})          *jump_cursor.opt().get_jumpable_column()*
-
-    引数: ~
-      • {text}  (`string`) 行
-
-    返値: ~
-        (`integer[]`) ジャンプできる列のインデックスのリスト
-
-get_jumpable_line({lines})             *jump_cursor.opt().get_jumpable_line()*
-
-    引数: ~
-      • {lines}  (`string[]`) 行のリスト
-
-    返値: ~
-        (`integer[]`) ジャンプできる行のインデックスのリスト
-
-select_column({buf},{line})                *jump_cursor.opt().select_column()*
-    行をハイライトして列を選択させる
-
-    引数: ~
-      • {buf}   (`integer`) バッファ
-      • {line}  (`integer`) 行
-
-    返値: ~
-        (`integer`) 選択された列
-
-select_line({buf},{start},{end})             *jump_cursor.opt().select_line()*
-    複数行をハイライトして行を選択させる
-
-    引数: ~
-      • {buf}    (`integer`) バッファ
-      • {start}  (`integer`) 開始行
-      • {end}    (`integer`) 終了行
-
-    返値: ~
-        (`integer`) 選択された行
-
-select_position({buf},{start},{end})     *jump_cursor.opt().select_position()*
-    複数行をハイライトして位置を選択させる
-
-    引数: ~
-      • {buf}    (`integer`) バッファ
-      • {start}  (`integer`) 開始行
-      • {end}    (`integer`) 終了行
-
-    返値: ~
-        (`integer[]`) 選択された位置  行と列の組み合わせ
-
-------------------------------------------------------------------------------
-select_position                                              *select_position*
-
-`jump_cursor` の改善
-`jump_cursor` は行指向なので 行が長すぎると後ろの列にはマークを割り当てられな
-くなる それに対し `select_position` は行を無視するので 一切の無駄なくマークを
-割り当てることが可能
-使うマークを減らすことができ 打ちづらいキーをマークとして使わずにすむ
-
 select_position.opt({opts})                            *select_position.opt()*
     オプションを設定する
-    |jump_cursor.opt()| とほぼ同じ
+
+    例: >lua
+        -- カーソルを移動
+        require("select_position").opt().set_cursor()
+        -- 挙動をカスタマイズ
+        require("select_position").opt({
+            hl_group = "error", -- エラーの色でハイライトする
+            ignore = "", -- 全ての文字にジャンプする
+            marks = "1234567890", -- ジャンプに使う文字
+        }).set_cursor()
+        -- キーマップして使う
+        vim.keymap.set({"n","v"},"<leader>j",
+        require("select_position").opt().set_cursor)
+<
 
     引数: ~
         {opts}  (`table?`) オプション 以下を含む
@@ -191,11 +116,11 @@ select_position({buf},{start},{end}) *select_position.opt().select_position()*
         (`integer[]`) 選択された位置 行と列の組
 
 set_cursor({window},{set_win})            *select_position.opt().set_cursor()*
-    ジャンプする
+    カーソルを移動する
 
     引数: ~
       • {window}   (`integer?`, 既定: `0`) ウィンドウ
-        |window-ID| もしくは 現在のウィンドウを表す 0
+                   |window-ID| もしくは 現在のウィンドウを表す 0
       • {set_win}  (`boolean?`, 既定: `false`) ウィンドウも移動する
 
 
