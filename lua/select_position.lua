@@ -10,7 +10,7 @@ function M.opt(opts)
     local ignore = opts.ignore or "/s"
 
     local mark_table = vim.split(marks,"")
-    local name_space = vim.api.nvim_create_namespace("jump_cursor")
+    local name_space = vim.api.nvim_create_namespace("select_position")
 
     local N = {} -- "M" の次の文字
 

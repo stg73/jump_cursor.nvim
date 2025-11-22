@@ -2,7 +2,7 @@
 操作方法は https://github.com/skanehira/jumpcursor.vim と同じ
 
 使い方:
-    このディレクトリをruntimepathに追加し require("jump_cursor") する
+    このディレクトリをruntimepathに追加し require("select_position") する
     詳細はhelpを参照
 
 luaの regex モジュールが必要
