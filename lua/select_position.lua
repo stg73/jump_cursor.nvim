@@ -9,9 +9,6 @@ function M.opt(opts)
     local hl_group = opts.hl_group or "special"
     local ignore = opts.ignore or "/s"
 
-    local mark_table = vim.split(marks,"")
-    local name_space = vim.api.nvim_create_namespace("select_position")
-
     local N = {} -- "M" の次の文字
 
     function N.mark_to_number(mark)
@@ -48,6 +45,24 @@ function M.opt(opts)
         return t
     end
 
+    do
+        local mark_table = vim.split(marks,"")
+        local name_space = vim.api.nvim_create_namespace("select_position")
+
+        function N.set_extmark(buf,pos,mark_idx)
+            vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
+                virt_text_pos = "overlay",
+                virt_text = {
+                    { mark_table[mark_idx], hl_group },
+                },
+            })
+        end
+
+        function N.clear_namespace(buf,start_line,end_line)
+            vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
+        end
+    end
+
     function N.select_position(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
         local pos_table = N.get_pos_table(buf_content,start_line)
@@ -58,12 +73,7 @@ function M.opt(opts)
         local function select_section()
             local function loop(pos_idx)
                 local pos = pos_table[pos_idx]
-                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
-                    virt_text_pos = "overlay",
-                    virt_text = {
-                        { mark_table[math.floor((pos_idx - 1)/mark_len) + 1], hl_group },
-                    },
-                })
+                N.set_extmark(buf,pos,math.floor((pos_idx - 1)/mark_len) + 1)
 
                 if pos_table[pos_idx + 1] then
                     loop(pos_idx + 1)
@@ -74,7 +84,7 @@ function M.opt(opts)
             vim.cmd.redraw()
 
             local selected_mark = vim.fn.getcharstr()
-            vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
+            N.clear_namespace(buf,start_line,end_line)
             local selected_section = N.mark_to_number(selected_mark)
 
             local section_len = math.ceil(#pos_table/mark_len)
@@ -95,12 +105,7 @@ function M.opt(opts)
                     return
                 end
 
-                vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
-                    virt_text_pos = "overlay",
-                    virt_text = {
-                        { mark_table[pos_idx], hl_group },
-                    },
-                })
+                N.set_extmark(buf,pos,pos_idx)
 
                 if pos_idx < mark_len then
                     loop(pos_idx + 1)
@@ -111,7 +116,7 @@ function M.opt(opts)
             vim.cmd.redraw()
 
             local selected_mark = vim.fn.getcharstr()
-            vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
+            N.clear_namespace(buf,start_line,end_line)
             local selected_column = N.mark_to_number(selected_mark)
             if selected_column <= mark_len then
                 local selected_pos = start_pos + selected_column - 1
