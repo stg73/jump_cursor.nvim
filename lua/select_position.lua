@@ -8,6 +8,7 @@ function M.opt(opts)
     local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
     local hl_group = opts.hl_group or "special"
     local ignore = opts.ignore or "/s"
+    local namespace = opts.namespace or "select_position"
 
     local N = {} -- "M" の次の文字
 
@@ -47,7 +48,7 @@ function M.opt(opts)
 
     do
         local mark_table = vim.split(marks,"")
-        local name_space = vim.api.nvim_create_namespace("select_position")
+        local name_space = vim.api.nvim_create_namespace(namespace)
 
         function N.set_extmark(buf,pos,mark_idx)
             vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
