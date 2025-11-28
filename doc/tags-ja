@@ -5,5 +5,9 @@ jump_cursor-intro	jump_cursor.jax	/*jump_cursor-intro*
 jump_cursor-usage	jump_cursor.jax	/*jump_cursor-usage*
 jump_cursor.jax	jump_cursor.jax	/*jump_cursor.jax*
 select_position.opt()	jump_cursor.jax	/*select_position.opt()*
+select_position.opt().clear_namespace()	jump_cursor.jax	/*select_position.opt().clear_namespace()*
+select_position.opt().get_positions()	jump_cursor.jax	/*select_position.opt().get_positions()*
+select_position.opt().mark_to_number()	jump_cursor.jax	/*select_position.opt().mark_to_number()*
 select_position.opt().select_position()	jump_cursor.jax	/*select_position.opt().select_position()*
 select_position.opt().set_cursor()	jump_cursor.jax	/*select_position.opt().set_cursor()*
+select_position.opt().set_extmark()	jump_cursor.jax	/*select_position.opt().set_extmark()*
