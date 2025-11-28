@@ -17,7 +17,7 @@ function M.opt(opts)
     end
 
     -- ジャンプできる位置のリストを取得する
-    function N.get_pos_table(str,start)
+    function N.get_positions(str,start)
         start = start or 0
         local t = {}
 
@@ -66,7 +66,7 @@ function M.opt(opts)
 
     function N.select_position(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
-        local pos_table = N.get_pos_table(buf_content,start_line)
+        local pos_table = N.get_positions(buf_content,start_line)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
