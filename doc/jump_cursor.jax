@@ -139,7 +139,7 @@ get_positions({str},{start})           *select_position.opt().get_positions()*
 
     引数: ~
       • {str}    (`string`) 文字列
-      • {start}  (`integer?`, 既定: `0`) 開始行
+      • {start}  (`integer`) 開始行
 
     返り値: ~
         (`integer[][]`) 位置のリスト  |nvim_win_set_cursor()| の形式
