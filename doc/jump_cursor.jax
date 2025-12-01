@@ -14,7 +14,7 @@
 依存
 
 luaの `regex` モジュールが必要
-リポジトリ: https://github.com/stg73/lua-modules
+リポジトリ: https://github.com/stg73/modules.nvim
 
 ==============================================================================
 使い方                                                     *jump_cursor-usage*

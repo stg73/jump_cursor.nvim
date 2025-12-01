@@ -6,4 +6,4 @@
     詳細はhelpを参照
 
 luaの regex モジュールが必要
-場所: https://github.com/stg73/lua-modules
+場所: https://github.com/stg73/modules.nvim
