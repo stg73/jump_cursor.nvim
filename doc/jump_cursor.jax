@@ -107,6 +107,9 @@ select_position.opt({opts})                            *select_position.opt()*
     返り値: ~
         (`table`) 以下を含む
 
+------------------------------------------------------------------------------
+主要
+
 select_position({buf},{start},{end}) *select_position.opt().select_position()*
     バッファ内の位置を選択する
 
@@ -129,16 +132,8 @@ set_cursor({window},{set_win})            *select_position.opt().set_cursor()*
                    |window-ID| もしくは 現在のウィンドウを表す 0
       • {set_win}  (`boolean?`, 既定: `false`) ウィンドウも移動する
 
-clear_namespace({buf},{start},{end}) *select_position.opt().clear_namespace()*
-    |nvim_buf_clear_namespace()| のラッパー
-
-    引数: ~
-      • {buf}    (`integer`) バッファ
-      • {start}  (`integer`) 開始行
-      • {end}    (`integer`) 終了行
-
-    参照: ~
-      • |nvim_buf_clear_namespace()|
+------------------------------------------------------------------------------
+その他
 
 get_positions({str},{start})           *select_position.opt().get_positions()*
     文字列からカーソルを移動できる位置のリストを取得する
@@ -160,6 +155,9 @@ mark_to_number({mark})                *select_position.opt().mark_to_number()*
         (`integer|inf`) {mark} の {marks} の中での位置
                       {marks} の中に存在しない場合は `inf`
 
+------------------------------------------------------------------------------
+マーク周り
+
 set_extmark({buf},{pos},{index})         *select_position.opt().set_extmark()*
     バッファ内の位置を指定してマークで塗り潰す
     |nvim_buf_set_extmark()| のラッパー
@@ -174,6 +172,17 @@ set_extmark({buf},{pos},{index})         *select_position.opt().set_extmark()*
 
     参照: ~
       • |nvim_buf_set_extmark()|
+
+clear_namespace({buf},{start},{end}) *select_position.opt().clear_namespace()*
+    |nvim_buf_clear_namespace()| のラッパー
+
+    引数: ~
+      • {buf}    (`integer`) バッファ
+      • {start}  (`integer`) 開始行
+      • {end}    (`integer`) 終了行
+
+    参照: ~
+      • |nvim_buf_clear_namespace()|
 
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
