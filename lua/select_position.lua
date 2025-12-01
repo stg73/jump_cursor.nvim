@@ -50,7 +50,7 @@ function M.opt(opts)
         local name_space = vim.api.nvim_create_namespace(namespace)
 
         function N.set_extmark(buf,pos,mark_idx)
-            vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
+            return vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[mark_idx], hl_group },

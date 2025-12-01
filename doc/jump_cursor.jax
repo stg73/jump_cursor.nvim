@@ -162,5 +162,8 @@ set_extmark({buf},{pos},{index})         *select_position.opt().set_extmark()*
       • {pos}    (`integer[]`) 位置  |nvim_win_set_cursor()| の形式
       • {index}  (`integer`)
 
+    返り値: ~
+        (`integer`) 作成された |extmark| のID
+
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
