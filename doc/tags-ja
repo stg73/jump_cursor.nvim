@@ -1,6 +1,7 @@
 jump_cursor	jump_cursor.jax	/*jump_cursor*
-jump_cursor-difference	jump_cursor.jax	/*jump_cursor-difference*
-jump_cursor-function	jump_cursor.jax	/*jump_cursor-function*
+jump_cursor-dependencies	jump_cursor.jax	/*jump_cursor-dependencies*
+jump_cursor-differences	jump_cursor.jax	/*jump_cursor-differences*
+jump_cursor-functions	jump_cursor.jax	/*jump_cursor-functions*
 jump_cursor-intro	jump_cursor.jax	/*jump_cursor-intro*
 jump_cursor-usage	jump_cursor.jax	/*jump_cursor-usage*
 jump_cursor.jax	jump_cursor.jax	/*jump_cursor.jax*

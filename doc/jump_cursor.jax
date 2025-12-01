@@ -11,7 +11,7 @@
 操作方法は `jumpcursor.vim` と同じ
 
 ==============================================================================
-依存
+依存                                                *jump_cursor-dependencies*
 
 luaの `regex` モジュールが必要
 リポジトリ: https://github.com/stg73/modules.nvim
@@ -56,7 +56,7 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 カスタマイズなどについては |select_position.opt()| を参照
 
 ==============================================================================
-jumpcursor.vim との違い                               *jump_cursor-difference*
+jumpcursor.vim との違い                              *jump_cursor-differences*
 
 マルチバイトに対応している
 
@@ -74,7 +74,7 @@ luaモジュールである
 関数の参照透過性が高い
 
 ==============================================================================
-関数                                                    *jump_cursor-function*
+関数                                                   *jump_cursor-functions*
 
 select_position.opt({opts})                            *select_position.opt()*
     オプションを設定する
