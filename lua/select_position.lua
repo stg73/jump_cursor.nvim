@@ -7,7 +7,7 @@ function M.opt(opts)
     local opts = opts or {}
     local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
     local hl_group = opts.hl_group or "special"
-    local ignore = opts.ignore or "/s"
+    local character = opts.character or "/S"
     local namespace = opts.namespace or "select_position"
 
     local N = {} -- "M" の次の文字
@@ -32,7 +32,7 @@ function M.opt(opts)
             if char == "\n" then
                 loop(line + 1,0,rest)
             else
-                if not r.is(ignore)(char) then -- ジャンプできる文字であれば
+                if r.is(character)(char) then -- ジャンプできる文字であれば
                     table.insert(t,{ line + start, column }) -- その文字の位置(行と列)を格納
                 end
 
