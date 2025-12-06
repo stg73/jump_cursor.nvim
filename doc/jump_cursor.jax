@@ -89,7 +89,7 @@ select_position.opt({opts})                            *select_position.opt()*
             marks = "1234567890", -- ジャンプに使う文字
         }).set_cursor()
         -- キーマップして使う
-        vim.keymap.set({"n","v"},"<leader>j",
+        vim.keymap.set({"n","v","o"},"<leader>j",
         require("select_position").opt().set_cursor)
 <
 
