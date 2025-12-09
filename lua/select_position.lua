@@ -6,7 +6,7 @@ function M.opt(opts)
     -- オプション
     local opts = opts or {}
     local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
-    local hl_group = opts.hl_group or "special"
+    local higroup = opts.higroup or "special"
     local character = opts.character or "/S"
     local namespace = opts.namespace or "select_position"
 
@@ -53,7 +53,7 @@ function M.opt(opts)
             return vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
-                    { mark_table[mark_idx], hl_group },
+                    { mark_table[mark_idx], higroup },
                 },
             })
         end
