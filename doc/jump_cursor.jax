@@ -30,9 +30,9 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 
 最初
 >
-    h|oge
-    fugafugafuga
-    piyo piyo
+    =|===
+    ============
+    ==== ====
 <
 |select_position.opt().set_cursor()| を実行
 >
@@ -43,8 +43,8 @@ https://zenn.dev/skanehira/articles/2022-01-29-vim-cursor-jump#jumpcursor.vim
 "a"を入力
 >
     a|otn
-    sugafugafuga
-    piyo piyo
+    s===========
+    ==== ====
 
 "s"を入力 カーソルが移動する
 >
