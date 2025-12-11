@@ -17,7 +17,7 @@ function M.opt(opts)
     end
 
     -- ジャンプできる位置のリストを取得する
-    function N.get_positions(str,start)
+    function N.get_positions(str,start_line,start_column)
         local t = {}
 
         local function loop(line,column,str)
@@ -33,7 +33,7 @@ function M.opt(opts)
                 loop(line + 1,0,rest)
             else
                 if r.is(character)(char) then -- ジャンプできる文字であれば
-                    table.insert(t,{ line + start, column }) -- その文字の位置(行と列)を格納
+                    table.insert(t,{ line + start_line, column + start_column }) -- その文字の位置(行と列)を格納
                 end
 
                 loop(line,column + string.len(char),rest)
@@ -65,7 +65,7 @@ function M.opt(opts)
 
     function N.select_position(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
-        local pos_table = N.get_positions(buf_content,start_line + 1)
+        local pos_table = N.get_positions(buf_content,start_line + 1,0)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める

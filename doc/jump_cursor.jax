@@ -135,12 +135,13 @@ set_cursor({window},{set_win})            *select_position.opt().set_cursor()*
 ------------------------------------------------------------------------------
 その他
 
-get_positions({str},{start})           *select_position.opt().get_positions()*
+get_positions({str},{line},{column})   *select_position.opt().get_positions()*
     文字列からカーソルを移動できる位置のリストを取得する
 
     引数: ~
-      • {str}    (`string`) 文字列
-      • {start}  (`integer`) 開始行
+      • {str}     (`string`) 文字列
+      • {line}    (`integer`) 開始行
+      • {column}  (`integer`) 開始列
 
     返り値: ~
         (`integer[][]`) 位置のリスト  |nvim_win_set_cursor()| の形式
