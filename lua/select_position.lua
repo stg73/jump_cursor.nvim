@@ -83,9 +83,8 @@ function M.opt(opts)
             loop(1)
             vim.cmd.redraw()
 
-            local selected_mark = vim.fn.getcharstr()
+            local selected_section = N.mark_to_number(vim.fn.getcharstr())
             N.clear_namespace(buf,start_line,end_line)
-            local selected_section = N.mark_to_number(selected_mark)
 
             local section_len = math.ceil(#pos_table/mark_len)
             if selected_section <= section_len then
@@ -115,9 +114,8 @@ function M.opt(opts)
             loop(1)
             vim.cmd.redraw()
 
-            local selected_mark = vim.fn.getcharstr()
+            local selected_column = N.mark_to_number(vim.fn.getcharstr())
             N.clear_namespace(buf,start_line,end_line)
-            local selected_column = N.mark_to_number(selected_mark)
             if selected_column <= mark_len then
                 local selected_pos = start_pos + selected_column - 1
                 return pos_table[selected_pos]
