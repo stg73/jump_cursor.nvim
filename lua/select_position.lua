@@ -20,7 +20,7 @@ function M.opt(opts)
     function N.get_positions(str,start_line,start_column)
         local t = {}
 
-        local function loop(line,column,str)
+        local function insert_positions(line,column,str)
             if str == "" then
                 return
             end
@@ -30,27 +30,27 @@ function M.opt(opts)
             local rest = string.sub(str,e + 1)
 
             if char == "\n" then
-                loop(line + 1,0,rest)
+                insert_positions(line + 1,0,rest)
             else
                 if r.is(character)(char) then -- ジャンプできる文字であれば
                     table.insert(t,{ line + start_line, column + start_column }) -- その文字の位置(行と列)を格納
                 end
 
-                loop(line,column + string.len(char),rest)
+                insert_positions(line,column + string.len(char),rest)
             end
         end
 
-        loop(0,0,str)
+        insert_positions(0,0,str)
 
         return t
     end
 
     do
         local mark_table = vim.split(marks,"")
-        local name_space = vim.api.nvim_create_namespace(namespace)
+        local ns_id = vim.api.nvim_create_namespace(namespace)
 
         function N.set_extmark(buf,pos,mark_idx)
-            return vim.api.nvim_buf_set_extmark(buf,name_space,pos[1] - 1,pos[2],{
+            return vim.api.nvim_buf_set_extmark(buf,ns_id,pos[1] - 1,pos[2],{
                 virt_text_pos = "overlay",
                 virt_text = {
                     { mark_table[mark_idx], higroup },
@@ -59,34 +59,34 @@ function M.opt(opts)
         end
 
         function N.clear_namespace(buf,start_line,end_line)
-            vim.api.nvim_buf_clear_namespace(buf,name_space,start_line,end_line)
+            vim.api.nvim_buf_clear_namespace(buf,ns_id,start_line,end_line)
         end
     end
 
     function N.select_position(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
-        local pos_table = N.get_positions(buf_content,start_line + 1,0)
+        local positions = N.get_positions(buf_content,start_line + 1,0)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
-        local mark_len = math.ceil(math.sqrt(#pos_table)) -- マークの数を決める
+        local mark_len = math.ceil(math.sqrt(#positions)) -- マークの数を決める
 
         local function select_section()
-            local function loop(pos_idx)
-                local pos = pos_table[pos_idx]
-                N.set_extmark(buf,pos,math.floor((pos_idx - 1)/mark_len) + 1)
+            local function set_extmark_range(i)
+                local pos = positions[i]
+                N.set_extmark(buf,pos,math.floor((i - 1)/mark_len) + 1)
 
-                if pos_table[pos_idx + 1] then
-                    loop(pos_idx + 1)
+                if positions[i + 1] then
+                    set_extmark_range(i + 1)
                 end
             end
 
-            loop(1)
+            set_extmark_range(1)
             vim.cmd.redraw()
 
             local selected_section = N.mark_to_number(vim.fn.getcharstr())
             N.clear_namespace(buf,start_line,end_line)
 
-            local section_len = math.ceil(#pos_table/mark_len)
+            local section_len = math.ceil(#positions/mark_len)
             if selected_section <= section_len then
                 return selected_section
             else
@@ -97,28 +97,28 @@ function M.opt(opts)
         local function select_position_from_section(section)
             local start_pos = (section - 1) * mark_len + 1
 
-            local function loop(pos_idx)
-                local pos = pos_table[pos_idx + start_pos - 1]
+            local function set_extmark_section(i)
+                local pos = positions[i + start_pos - 1]
 
                 if pos == nil then
                     return
                 end
 
-                N.set_extmark(buf,pos,pos_idx)
+                N.set_extmark(buf,pos,i)
 
-                if pos_idx < mark_len then
-                    loop(pos_idx + 1)
+                if i < mark_len then
+                    set_extmark_section(i + 1)
                 end
             end
 
-            loop(1)
+            set_extmark_section(1)
             vim.cmd.redraw()
 
             local selected_column = N.mark_to_number(vim.fn.getcharstr())
             N.clear_namespace(buf,start_line,end_line)
             if selected_column <= mark_len then
                 local selected_pos = start_pos + selected_column - 1
-                return pos_table[selected_pos]
+                return positions[selected_pos]
             else
                 return nil
             end
@@ -135,8 +135,8 @@ function M.opt(opts)
     function N.set_cursor(win,set_win)
         win = win or 0
         local buf = vim.api.nvim_win_get_buf(win)
-        local info = vim.fn.getwininfo(win ~= 0 and win or vim.api.nvim_get_current_win())[1]
-        local pos = N.select_position(buf,info.topline - 1,info.botline)
+        local wininfo = vim.fn.getwininfo(win ~= 0 and win or vim.api.nvim_get_current_win())[1]
+        local pos = N.select_position(buf,wininfo.topline - 1,wininfo.botline)
         if pos then
             vim.api.nvim_win_set_cursor(win,pos)
             if set_win then
