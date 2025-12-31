@@ -63,14 +63,16 @@ function M.opt(opts)
         end
     end
 
-    function N.select_position(buf,start_line,end_line)
+    function N.select(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
         local positions = N.get_positions(buf_content,start_line + 1,0)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#positions)) -- マークの数を決める
 
-        local function select_section()
+        local O = {}
+
+        function O.section()
             local function set_extmark_range(i)
                 local pos = positions[i]
                 N.set_extmark(buf,pos,math.floor((i - 1)/mark_len) + 1)
@@ -94,7 +96,7 @@ function M.opt(opts)
             end
         end
 
-        local function select_position_from_section(section)
+        function O.position_from_section(section)
             local start_pos = (section - 1) * mark_len + 1
 
             local function set_extmark_section(i)
@@ -124,19 +126,23 @@ function M.opt(opts)
             end
         end
 
-        local section = select_section()
-        if section then
-            return select_position_from_section(section)
-        else
-            return nil
+        function O.position()
+            local section = O.section()
+            if section then
+                return O.position_from_section(section)
+            else
+                return nil
+            end
         end
+
+        return O
     end
 
     function N.set_cursor(win,set_win)
         win = win or 0
         local buf = vim.api.nvim_win_get_buf(win)
         local wininfo = vim.fn.getwininfo(win ~= 0 and win or vim.api.nvim_get_current_win())[1]
-        local pos = N.select_position(buf,wininfo.topline - 1,wininfo.botline)
+        local pos = N.select(buf,wininfo.topline - 1,wininfo.botline).position()
         if pos then
             vim.api.nvim_win_set_cursor(win,pos)
             if set_win then

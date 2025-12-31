@@ -109,7 +109,18 @@ select_position.opt({opts})                            *select_position.opt()*
 ------------------------------------------------------------------------------
 主要
 
-select_position({buf},{start},{end}) *select_position.opt().select_position()*
+set_cursor({window},{set_win})            *select_position.opt().set_cursor()*
+    カーソルを移動する
+
+    |select_position.opt().select().position()| で位置を選択し
+    |nvim_win_set_cursor()| でその位置に移動する
+
+    引数: ~
+      • {window}   (`integer?`, 既定: `0`) ウィンドウ
+                   |window-ID| もしくは 現在のウィンドウを表す 0
+      • {set_win}  (`boolean?`, 既定: `false`) ウィンドウも移動する
+
+select({buf},{start},{end})                   *select_position.opt().select()*
     バッファ内の位置を選択する
 
     引数: ~
@@ -118,18 +129,28 @@ select_position({buf},{start},{end}) *select_position.opt().select_position()*
       • {end}    (`integer`) 終了行
 
     返り値: ~
-        (`integer[]`) 選択された位置  |nvim_win_set_cursor()| の形式
+        (`table`) 以下を含む
 
-set_cursor({window},{set_win})            *select_position.opt().set_cursor()*
-    カーソルを移動する
+section()                           *select_position.opt().select().section()*
+    バッファ内のセクションを選択する
 
-    |select_position.opt().select_position()| で位置を選択し
-    |nvim_win_set_cursor()| でその位置に移動する
+    返り値: ~
+        (`integer[]`) 選択されたセクション
+
+position_from_section() *select_position.opt().select().position_from_section()*
+    バッファ内の位置を選択する
 
     引数: ~
-      • {window}   (`integer?`, 既定: `0`) ウィンドウ
-                   |window-ID| もしくは 現在のウィンドウを表す 0
-      • {set_win}  (`boolean?`, 既定: `false`) ウィンドウも移動する
+      • {section}  (`integer`) セクション
+
+    返り値: ~
+        (`integer[]`) 選択された位置  |nvim_win_set_cursor()| の形式
+
+position()                         *select_position.opt().select().position()*
+    バッファ内の位置を選択する
+
+    返り値: ~
+        (`integer[]`) 選択された位置  |nvim_win_set_cursor()| の形式
 
 ------------------------------------------------------------------------------
 その他
