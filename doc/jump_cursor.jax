@@ -179,6 +179,14 @@ mark_to_number({mark})                *select_position.opt().mark_to_number()*
 ------------------------------------------------------------------------------
 マーク周り
 
+set_marks({buf},{positions},{fn})          *select_position.opt().set_marks()*
+
+    引数: ~
+      • {buf}        (`integer`) バッファ
+      • {positions}  (`integer[][]`) 位置のリスト
+                     |select_position.opt().get_positions()| の返り値の形式
+      • {fn}         (`fun(i: integer): integer`) {positions} のインデックス
+
 set_extmark({buf},{pos},{index})         *select_position.opt().set_extmark()*
     バッファ内の位置を指定してマークで塗り潰す
     |nvim_buf_set_extmark()| のラッパー

@@ -63,6 +63,12 @@ function M.opt(opts)
         end
     end
 
+    function N.set_marks(buf,positions,fn)
+        for k,v in pairs(positions) do
+            N.set_extmark(buf,positions[k],fn(k))
+        end
+    end
+
     function N.select(buf,start_line,end_line)
         local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
         local positions = N.get_positions(buf_content,start_line + 1,0)
@@ -73,16 +79,7 @@ function M.opt(opts)
         local O = {}
 
         function O.section()
-            local function set_extmark_range(i)
-                local pos = positions[i]
-                N.set_extmark(buf,pos,math.floor((i - 1)/mark_len) + 1)
-
-                if positions[i + 1] then
-                    set_extmark_range(i + 1)
-                end
-            end
-
-            set_extmark_range(1)
+            N.set_marks(buf,positions,function(i) return math.floor((i - 1)/mark_len) + 1 end)
             vim.cmd.redraw()
 
             local selected_section = N.mark_to_number(vim.fn.getcharstr())
@@ -99,21 +96,8 @@ function M.opt(opts)
         function O.position_from_section(section)
             local start_pos = (section - 1) * mark_len + 1
 
-            local function set_extmark_section(i)
-                local pos = positions[i + start_pos - 1]
-
-                if pos == nil then
-                    return
-                end
-
-                N.set_extmark(buf,pos,i)
-
-                if i < mark_len then
-                    set_extmark_section(i + 1)
-                end
-            end
-
-            set_extmark_section(1)
+            local section_positions = vim.list_slice(positions,start_pos,start_pos + mark_len - 1)
+            N.set_marks(buf,section_positions,function(i) return i end)
             vim.cmd.redraw()
 
             local selected_column = N.mark_to_number(vim.fn.getcharstr())
