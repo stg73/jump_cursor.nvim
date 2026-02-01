@@ -14,5 +14,4 @@ select_position.opt().select().position()	jump_cursor.jax	/*select_position.opt(
 select_position.opt().select().position_from_section()	jump_cursor.jax	/*select_position.opt().select().position_from_section()*
 select_position.opt().select().section()	jump_cursor.jax	/*select_position.opt().select().section()*
 select_position.opt().set_cursor()	jump_cursor.jax	/*select_position.opt().set_cursor()*
-select_position.opt().set_extmark()	jump_cursor.jax	/*select_position.opt().set_extmark()*
 select_position.opt().set_marks()	jump_cursor.jax	/*select_position.opt().set_marks()*

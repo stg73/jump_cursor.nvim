@@ -49,23 +49,20 @@ function M.opt(opts)
         local mark_table = vim.split(marks,"")
         local ns_id = vim.api.nvim_create_namespace(namespace)
 
-        function N.set_extmark(buf,pos,mark_idx)
-            return vim.api.nvim_buf_set_extmark(buf,ns_id,pos[1] - 1,pos[2],{
-                virt_text_pos = "overlay",
-                virt_text = {
-                    { mark_table[mark_idx], higroup },
-                },
-            })
-        end
-
         function N.clear_namespace(buf,start_line,end_line)
             vim.api.nvim_buf_clear_namespace(buf,ns_id,start_line,end_line)
         end
-    end
 
-    function N.set_marks(buf,positions,fn)
-        for k,v in pairs(positions) do
-            N.set_extmark(buf,positions[k],fn(k))
+        function N.set_marks(buf,positions,fn)
+            for k,v in pairs(positions) do
+                local pos = positions[k]
+                vim.api.nvim_buf_set_extmark(buf,ns_id,pos[1] - 1,pos[2],{
+                    virt_text_pos = "overlay",
+                    virt_text = {
+                        { mark_table[fn(k)], higroup },
+                    },
+                })
+            end
         end
     end
 

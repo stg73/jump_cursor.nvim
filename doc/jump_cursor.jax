@@ -187,21 +187,6 @@ set_marks({buf},{positions},{fn})          *select_position.opt().set_marks()*
                      |select_position.opt().get_positions()| の返り値の形式
       • {fn}         (`fun(i: integer): integer`) {positions} のインデックス
 
-set_extmark({buf},{pos},{index})         *select_position.opt().set_extmark()*
-    バッファ内の位置を指定してマークで塗り潰す
-    |nvim_buf_set_extmark()| のラッパー
-
-    引数: ~
-      • {buf}    (`integer`) バッファ
-      • {pos}    (`integer[]`) 位置  |nvim_win_set_cursor()| の形式
-      • {index}  (`integer`)
-
-    返り値: ~
-        (`integer`) 作成された |extmark| のID
-
-    参照: ~
-      • |nvim_buf_set_extmark()|
-
 clear_namespace({buf},{start},{end}) *select_position.opt().clear_namespace()*
     |nvim_buf_clear_namespace()| のラッパー
 
