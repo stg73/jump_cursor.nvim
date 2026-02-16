@@ -1,6 +1,7 @@
 local M = {}
 
 local r = require("regex")
+local tbl = require("tbl")
 
 function M.opt(opts)
     -- オプション
@@ -16,33 +17,32 @@ function M.opt(opts)
         return r.find("/V" .. mark)(marks) or math.huge
     end
 
-    -- ジャンプできる位置のリストを取得する
-    function N.get_positions(str,start_line,start_column)
-        local t = {}
+    function N.get_positions(lines,start_line,start_column)
+        local positions = {}
+        local for_pairs = tbl.flip(tbl.pairs)
+        for_pairs(lines)(function(key_val)
+            local line = key_val[1] - 1
+            local line_str = key_val[2]
+            local utf_pos = vim.str_utf_pos(line_str)
+            for_pairs(utf_pos)(function(key_val)
+                local char = (function()
+                    local char_start = key_val[2]
+                    local next_utf_pos = utf_pos[key_val[1] + 1]
+                    local char_end = next_utf_pos or (char_start + 1)
+                    return string.sub(line_str,char_start,char_end - 1)
+                end)()
+                local column = key_val[2] - 1
+                local pos = {
+                    line + start_line,
+                    column + start_column
+                }
 
-        local function insert_positions(line,column,str)
-            if str == "" then
-                return
-            end
-
-            local s,e = r.find(".")(str) -- string.findはマルチバイトに対応していない
-            local char = string.sub(str,s,e)
-            local rest = string.sub(str,e + 1)
-
-            if char == "\n" then
-                insert_positions(line + 1,0,rest)
-            else
-                if r.is(character)(char) then -- ジャンプできる文字であれば
-                    table.insert(t,{ line + start_line, column + start_column }) -- その文字の位置(行と列)を格納
+                if r.is(character)(char) then
+                    table.insert(positions,pos)
                 end
-
-                insert_positions(line,column + string.len(char),rest)
-            end
-        end
-
-        insert_positions(0,0,str)
-
-        return t
+            end)
+        end)
+        return positions
     end
 
     do
@@ -67,8 +67,7 @@ function M.opt(opts)
     end
 
     function N.select(buf,start_line,end_line)
-        local buf_content = table.concat(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),"\n")
-        local positions = N.get_positions(buf_content,start_line + 1,0)
+        local positions = N.get_positions(vim.api.nvim_buf_get_lines(buf,start_line,end_line,false),start_line + 1,0)
 
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#positions)) -- マークの数を決める
