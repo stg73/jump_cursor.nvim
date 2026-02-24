@@ -9,7 +9,7 @@ function M.opt(opts)
     local marks = opts.marks or "aotnsiu-kwr,dhvcef.yl;gmjxzbpqAOTNSIU=KWR<DHVCEF>YL+GMJXZBPQ"
     local higroup = opts.higroup or "special"
     local character = opts.character or "/S"
-    local namespace = opts.namespace or "select_position"
+    local ns_id = vim.api.nvim_create_namespace(opts.namespace or "select_position")
 
     local N = {} -- "M" の次の文字
 
@@ -45,24 +45,16 @@ function M.opt(opts)
         return positions
     end
 
-    do
-        local mark_table = vim.split(marks,"")
-        local ns_id = vim.api.nvim_create_namespace(namespace)
-
-        function N.clear_namespace(buf,start_line,end_line)
-            vim.api.nvim_buf_clear_namespace(buf,ns_id,start_line,end_line)
-        end
-
-        function N.set_marks(buf,positions,fn)
-            for k,v in pairs(positions) do
-                local pos = positions[k]
-                vim.api.nvim_buf_set_extmark(buf,ns_id,pos[1] - 1,pos[2],{
-                    virt_text_pos = "overlay",
-                    virt_text = {
-                        { mark_table[fn(k)], higroup },
-                    },
-                })
-            end
+    local mark_table = vim.split(marks,"")
+    function N.set_marks(buf,positions,fn)
+        for k,v in pairs(positions) do
+            local pos = positions[k]
+            vim.api.nvim_buf_set_extmark(buf,ns_id,pos[1] - 1,pos[2],{
+                virt_text_pos = "overlay",
+                virt_text = {
+                    { mark_table[fn(k)], higroup },
+                },
+            })
         end
     end
 
@@ -72,15 +64,19 @@ function M.opt(opts)
         -- マーク数の最適化 最初の塗り潰しと2番目の塗り潰しでマークが同じ数になるようにする
         local mark_len = math.ceil(math.sqrt(#positions)) -- マークの数を決める
 
+        local function select_index()
+            local char = vim.fn.getcharstr()
+            vim.api.nvim_buf_clear_namespace(buf,ns_id,start_line,end_line)
+            return N.mark_to_number(char)
+        end
+
         local O = {}
 
         function O.section()
             N.set_marks(buf,positions,function(i) return math.floor((i - 1)/mark_len) + 1 end)
             vim.cmd.redraw()
 
-            local selected_section = N.mark_to_number(vim.fn.getcharstr())
-            N.clear_namespace(buf,start_line,end_line)
-
+            local selected_section = select_index()
             local section_len = math.ceil(#positions/mark_len)
             if selected_section <= section_len then
                 return selected_section
@@ -96,8 +92,7 @@ function M.opt(opts)
             N.set_marks(buf,section_positions,function(i) return i end)
             vim.cmd.redraw()
 
-            local selected_column = N.mark_to_number(vim.fn.getcharstr())
-            N.clear_namespace(buf,start_line,end_line)
+            local selected_column = select_index()
             if selected_column <= mark_len then
                 local selected_pos = start_pos + selected_column - 1
                 return positions[selected_pos]

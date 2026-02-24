@@ -187,16 +187,5 @@ set_marks({buf},{positions},{fn})          *select_position.opt().set_marks()*
                      |select_position.opt().get_positions()| の返り値の形式
       • {fn}         (`fun(i: integer): integer`) {positions} のインデックス
 
-clear_namespace({buf},{start},{end}) *select_position.opt().clear_namespace()*
-    |nvim_buf_clear_namespace()| のラッパー
-
-    引数: ~
-      • {buf}    (`integer`) バッファ
-      • {start}  (`integer`) 開始行
-      • {end}    (`integer`) 終了行
-
-    参照: ~
-      • |nvim_buf_clear_namespace()|
-
 
  vim:tw=78:ts=8:sw=4:sts=4:et:ft=help:norl:
